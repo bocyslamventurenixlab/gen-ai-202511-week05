@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Google API Test</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 20px; }
+      input, select { margin-right: 8px; }
+      pre { background: #f6f6f6; padding: 10px; border: 1px solid #ddd; max-height: 50vh; overflow: auto; }
+    </style>
+  </head>
+  <body>
+    <h2>Google API Test</h2>
+    <p>
+      <a href="/api/auth" target="_blank">Start OAuth flow (get refresh token)</a>
+    </p>
+
+    <div>
+      <select id="service">
+        <option value="gmail">Gmail</option>
+        <option value="docs">Google Docs</option>
+        <option value="sheets">Google Sheets</option>
+      </select>
+      <input id="q" placeholder="search query (optional)" />
+      <button id="run">Run</button>
+    </div>
+
+    <h3>Result</h3>
+    <pre id="out">No results yet</pre>
+
+    <script>
+      document.getElementById('run').onclick = async () => {
+        const svc = document.getElementById('service').value;
+        const q = encodeURIComponent(document.getElementById('q').value || '');
+        const url = `/api/${svc}${q ? '?q=' + q : ''}`;
+        document.getElementById('out').textContent = 'Loading...';
+        try {
+          const r = await fetch(url);
+          const data = await r.json();
+          document.getElementById('out').textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+          document.getElementById('out').textContent = 'Error: ' + e.message;
+        }
+      };
+    </script>
+  </body>
+</html>
